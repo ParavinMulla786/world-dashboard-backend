@@ -73,10 +73,9 @@ router.get(
 );
 
 router.get(
-  "/countries/population-less/:maxPop",
+  "/countries-less-population/:maxPop",
   dashboardController.getCountriesWithLessPopulation
 );
-
 
 router.get(
   "/country-languages/:countryName",
