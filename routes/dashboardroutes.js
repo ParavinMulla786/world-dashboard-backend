@@ -77,5 +77,11 @@ router.get(
   dashboardController.getCountriesWithLessPopulation
 );
 
+
+router.get(
+  "/country-languages/:countryName",
+  dashboardController.getLanguagesByCountry
+);
+
 module.exports = router;
 

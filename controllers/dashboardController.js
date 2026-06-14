@@ -436,6 +436,34 @@ async function getCountriesWithLessPopulation(req, res) {
   }
 }
 
+async function getLanguagesByCountry(req, res) {
+  try {
+    const { countryName } = req.params;
+
+    const q = `
+      SELECT cl.Language
+      FROM countrylanguage cl
+      JOIN country c
+      ON cl.CountryCode = c.Code
+      WHERE c.Name = ?
+    `;
+
+    const [resultDB] = await connection.execute(q, [countryName]);
+
+    res.status(200).send({
+      success: true,
+      languages: resultDB,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      msg: "Server error",
+    });
+  }
+}
+
 module.exports = {
   getTotalPopulation,
   getTotalContries,
@@ -455,6 +483,7 @@ getLargestCities,
 getTotalCities,
 getCountriesByMinPopulation,
   getCountriesWithLessPopulation,
+  getLanguagesByCountry,
 
 
 };
