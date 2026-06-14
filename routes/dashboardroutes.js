@@ -47,4 +47,35 @@ router.get(
   "/average-life-expectancy",
   dashboardController.getAverageLifeExpectancy
 );
+
+router.get(
+  "/top-life-expectancy",
+  dashboardController.getTopLifeExpectancyCountries
+);
+
+router.get(
+  "/lowest-life-expectancy",
+  dashboardController.getLowestLifeExpectancyCountries
+);
+
+router.get(
+  "/city/:cityName",
+  dashboardController.getCityByName
+);
+
+router.get("/largest-cities", dashboardController.getLargestCities);
+
+router.get("/total-cities", dashboardController.getTotalCities);
+
+router.get(
+  "/countries/population/:minPop",
+  dashboardController.getCountriesByMinPopulation
+);
+
+router.get(
+  "/countries/population-less/:maxPop",
+  dashboardController.getCountriesWithLessPopulation
+);
+
 module.exports = router;
+

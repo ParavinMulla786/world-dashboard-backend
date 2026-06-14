@@ -246,6 +246,195 @@ async function getAverageLifeExpectancy(req, res) {
 
 
 
+async function getTopLifeExpectancyCountries(req, res) {
+  try {
+    const q11 = `
+      SELECT Name, Population, LifeExpectancy
+      FROM country
+      WHERE LifeExpectancy IS NOT NULL
+      ORDER BY LifeExpectancy DESC
+      LIMIT 10
+    `;
+
+    const [resultDB] = await connection.execute(q11);
+
+    res.status(200).send({
+      success: true,
+      countries: resultDB,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      msg: "Server error",
+    });
+  }
+}
+
+async function getLowestLifeExpectancyCountries(req, res) {
+  try {
+    const q = `
+      SELECT Name, Population, LifeExpectancy
+      FROM country
+      WHERE LifeExpectancy IS NOT NULL
+      ORDER BY LifeExpectancy ASC
+      LIMIT 10
+    `;
+
+    const [resultDB] = await connection.execute(q);
+
+    res.status(200).send({
+      success: true,
+      countries: resultDB,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      msg: "Server error",
+    });
+  }
+}
+
+
+async function getCityByName(req, res) {
+  try {
+    const { cityName } = req.params;
+
+    const query = `
+      SELECT *
+      FROM city
+      WHERE Name = ?
+    `;
+
+    const [resultDB] = await connection.execute(query, [cityName]);
+
+    if (resultDB.length === 0) {
+      return res.status(404).send({
+        success: false,
+        msg: "City not found",
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      city: resultDB[0],
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      msg: "Server error",
+    });
+  }
+}
+
+async function getLargestCities(req, res) {
+  try {
+    const q = `
+      SELECT ID, Name, CountryCode, District, Population
+      FROM city
+      ORDER BY Population DESC
+      LIMIT 10
+    `;
+
+    const [resultDB] = await connection.execute(q);
+
+    res.status(200).send({
+      success: true,
+      cities: resultDB,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      msg: "Server error",
+    });
+  }
+}
+
+
+async function getTotalCities(req, res) {
+  try {
+    const q = `
+      SELECT COUNT(*) AS totalCities
+      FROM city
+    `;
+
+    const [resultDB] = await connection.execute(q);
+
+    res.status(200).send({
+      success: true,
+      totalCities: resultDB[0].totalCities,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      msg: "Server error",
+    });
+  }
+}
+
+
+async function getCountriesByMinPopulation(req, res) {
+  try {
+    const { minPop } = req.params; // X value from URL
+
+    const q = `
+      
+      SELECT Name, Population, Code AS CountryCode, Continent
+FROM country
+WHERE Population > ?
+ORDER BY Population DESC;
+    `;
+
+    const [resultDB] = await connection.execute(q, [minPop]);
+
+    res.status(200).send({
+      success: true,
+      countries: resultDB,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      msg: "Server error",
+    });
+  }
+}
+
+
+async function getCountriesWithLessPopulation(req, res) {
+  try {
+    const { maxPop } = req.params; // X value
+
+    const q = `
+      SELECT Name, Population, CountryCode, Continent
+      FROM country
+      WHERE Population < ?
+      ORDER BY Population ASC
+    `;
+
+    const [resultDB] = await connection.execute(q, [maxPop]);
+
+    res.status(200).send({
+      success: true,
+      countries: resultDB,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      msg: "Server error",
+    });
+  }
+}
 
 module.exports = {
   getTotalPopulation,
@@ -259,4 +448,13 @@ getTotalLanguages,
 getTopTenLanguages,
 getCountriesGDPPerCapita,
 getAverageLifeExpectancy,
+getTopLifeExpectancyCountries,
+getLowestLifeExpectancyCountries,
+getCityByName,
+getLargestCities,
+getTotalCities,
+getCountriesByMinPopulation,
+  getCountriesWithLessPopulation,
+
+
 };
